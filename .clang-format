@@ -1,0 +1,21 @@
+---
+BasedOnStyle:               LLVM
+LineEnding:                 LF
+IndentWidth:                8
+TabWidth:                   4
+ColumnLimit:                80
+AlignAfterOpenBracket:      BlockIndent
+---
+Language:                   Cpp
+Standard:                   Latest
+SpacesInParens:             Custom
+SpacesInParensOptions:
+  InConditionalStatements:  true
+UseTab:                     Always 
+RemoveSemicolon:            true
+AlignConsecutiveAssignments:
+  Enabled:          true
+  AcrossEmptyLines: false
+  AcrossComments:   true
+  AlignCompound:    true
+...
