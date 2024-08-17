@@ -11,7 +11,9 @@
 
 #include "utils.h"
 
+#ifndef LIBC_SO
 #define LIBC_SO "libc.so.6"
+#endif
 
 #define B2IF_NAME "B2IFACE_NAME"
 

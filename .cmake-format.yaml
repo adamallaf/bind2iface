@@ -4,7 +4,7 @@ command_case: upper
 dangle_parens: true
 enable_sort: true
 line_width: 80
-max_pargs_hwrap: 2
+max_pargs_hwrap: 3
 max_subargs_per_line: 6
 max_subgroups_hwrap: 3
 separate_ctrl_name_with_space: true
