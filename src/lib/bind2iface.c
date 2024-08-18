@@ -24,11 +24,9 @@ typedef int (*volatile socket_t)(int domain, int type, int protocol);
 typedef int (*volatile connect_t)(
     int fd, const struct sockaddr *addr, socklen_t len
 );
-typedef int (*volatile syscall_t)(long int number, ...);
 
 static socket_t libc_socket;
 static connect_t libc_connect;
-static syscall_t libc_syscall;
 
 static char *iface_name = 0;
 
@@ -44,7 +42,6 @@ static void initLibcSymbols() {
     dlerror(); /* clear old errors */
     LOAD_SYMBOL(socket, libc_ptr)
     LOAD_SYMBOL(connect, libc_ptr)
-    LOAD_SYMBOL(syscall, libc_ptr)
 
     if ( 0 < verbose )
         fprintf(stdout, "[+] loaded libc symbols\n");
@@ -86,16 +83,6 @@ int connect(int fd, const struct sockaddr *addr, socklen_t len) {
 
     free(buf);
     return libc_connect(fd, addr, len);
-}
-
-int syscall(long int number, ...) {
-    va_list args;
-    if ( 2 < verbose )
-        fprintf(stderr, "syscall %ld \n", number);
-    va_start(args, number);
-    int result = libc_syscall(number, args);
-    va_end(args);
-    return result;
 }
 
 void __attribute__((constructor)) lib_init(void) {
