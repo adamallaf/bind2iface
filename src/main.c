@@ -1,5 +1,6 @@
 #include <err.h>
 #include <errno.h>
+#include <libgen.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,10 +70,14 @@ int main(int argc, char *argv[]) {
         err(EXIT_FAILURE, "%s", cwd);
     }
 
+    char lib_path[PATH_MAX];
+    readlink("/proc/self/exe", lib_path, PATH_MAX - 1);
+
+    sprintf(lib_path, "%s/%s", dirname(lib_path), "libbind2iface.so");
     char b2ifverbose[2];
     sprintf(b2ifverbose, "%d", verbose);
 
-    setenv("LD_PRELOAD", "./libbind2iface.so", 1);
+    setenv("LD_PRELOAD", lib_path, 1);
     setenv("B2IFACE_NAME", iface_name, 1);
     setenv("B2IFACE_VERBOSE", b2ifverbose, 1);
 
