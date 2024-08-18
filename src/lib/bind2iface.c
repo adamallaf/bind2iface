@@ -1,4 +1,5 @@
 #include <arpa/inet.h>
+#include <ctype.h>
 #include <dlfcn.h>
 #include <err.h>
 #include <errno.h>
@@ -17,6 +18,7 @@
 #endif
 
 #define B2IF_NAME "B2IFACE_NAME"
+#define B2IF_VERBOSE "B2IFACE_VERBOSE"
 
 typedef int (*volatile socket_t)(int domain, int type, int protocol);
 typedef int (*volatile connect_t)(
@@ -30,7 +32,9 @@ static syscall_t libc_syscall;
 
 static char *iface_name = 0;
 
-static void init_libc_symbols() {
+static int verbose;
+
+static void initLibcSymbols() {
     dlerror(); /* clear old errors */
     void *libc_ptr = dlopen(LIBC_SO, RTLD_LAZY);
     if ( !libc_ptr ) {
@@ -42,9 +46,8 @@ static void init_libc_symbols() {
     LOAD_SYMBOL(connect, libc_ptr)
     LOAD_SYMBOL(syscall, libc_ptr)
 
-#ifdef DEBUG
-    fprintf(stdout, "[+] loaded libc symbols\n");
-#endif
+    if ( 0 < verbose )
+        fprintf(stdout, "[+] loaded libc symbols\n");
 
     dlclose(libc_ptr);
 }
@@ -52,9 +55,8 @@ static void init_libc_symbols() {
 int socket(int domain, int type, int protocol) {
     struct ifreq ifr;
 
-#ifdef DEBUG
-    fprintf(stderr, "socket %d %d %d\n", domain, type, protocol);
-#endif
+    if ( 2 < verbose )
+        fprintf(stderr, "socket %d %d %d\n", domain, type, protocol);
 
     int sockfd = libc_socket(domain, type, protocol);
     memset(&ifr, 0, sizeof(struct ifreq));
@@ -79,7 +81,8 @@ int connect(int fd, const struct sockaddr *addr, socklen_t len) {
     char *buf = (char *)malloc(32);
 
     inet_ntop(AF_INET, &tmp->sin_addr, buf, 32);
-    fprintf(stderr, "connect %d %s:%d\n", fd, buf, ntohs(tmp->sin_port));
+    if ( 2 < verbose )
+        fprintf(stderr, "connect %d %s:%d\n", fd, buf, ntohs(tmp->sin_port));
 
     free(buf);
     return libc_connect(fd, addr, len);
@@ -87,7 +90,8 @@ int connect(int fd, const struct sockaddr *addr, socklen_t len) {
 
 int syscall(long int number, ...) {
     va_list args;
-    fprintf(stderr, "syscall %ld \n", number);
+    if ( 2 < verbose )
+        fprintf(stderr, "syscall %ld \n", number);
     va_start(args, number);
     int result = libc_syscall(number, args);
     va_end(args);
@@ -95,7 +99,13 @@ int syscall(long int number, ...) {
 }
 
 void __attribute__((constructor)) lib_init(void) {
-    init_libc_symbols();
+    verbose           = 0;
+    char *verbose_env = getenv(B2IF_VERBOSE);
+    if ( verbose_env != NULL )
+        if ( strlen(verbose_env) == 1 && isdigit((int)verbose_env[0]) )
+            verbose = atoi(verbose_env);
+    if ( 0 < verbose )
+        fprintf(stdout, "[*] verbosity level: %d\n", verbose);
 
     iface_name = getenv(B2IF_NAME);
     if ( iface_name == NULL )
@@ -103,7 +113,10 @@ void __attribute__((constructor)) lib_init(void) {
             EXIT_FAILURE, "[-] No interface provided, please set %s=<iface>",
             B2IF_NAME
         );
-    fprintf(stdout, "[*] using network interface: %s\n", iface_name);
+    if ( 0 < verbose )
+        fprintf(stdout, "[*] using network interface: %s\n", iface_name);
+
+    initLibcSymbols();
 }
 
 void __attribute__((destructor)) lib_deinit(void) { ; }
