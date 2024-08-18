@@ -7,6 +7,8 @@
 #include <sys/param.h>
 #include <unistd.h>
 
+extern char **environ;
+
 char iface_name[16];
 int verbose = 0;
 
@@ -67,14 +69,12 @@ int main(int argc, char *argv[]) {
         err(EXIT_FAILURE, "%s", cwd);
     }
 
-    char b2ifname[32];
-    char b2ifverbose[20];
-    sprintf(b2ifname, "B2IFACE_NAME=%s", iface_name);
-    sprintf(b2ifverbose, "B2IFACE_VERBOSE=%d", verbose);
+    char b2ifverbose[2];
+    sprintf(b2ifverbose, "%d", verbose);
 
-    char *const envs[] = {
-        "LD_PRELOAD=./libbind2iface.so", b2ifname, b2ifverbose, NULL
-    };
+    setenv("LD_PRELOAD", "./libbind2iface.so", 1);
+    setenv("B2IFACE_NAME", iface_name, 1);
+    setenv("B2IFACE_VERBOSE", b2ifverbose, 1);
 
-    return execve(binary_path, &argv[exec_args_offset], envs);
+    return execve(binary_path, &argv[exec_args_offset], environ);
 }
