@@ -1,3 +1,6 @@
+#define _GNU_SOURCE
+
+#include <ctype.h>
 #include <err.h>
 #include <errno.h>
 #include <libgen.h>
@@ -6,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/param.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 extern char **environ;
@@ -15,7 +19,7 @@ int verbose = 0;
 
 int main(int argc, char *argv[]) {
     if ( 2 > argc ) {
-        errx(EXIT_FAILURE, "no interface specified.");
+        errx(EXIT_FAILURE, "no device specified.");
         /* print usage here */
     }
     strncpy(iface_name, argv[1], MIN(sizeof(iface_name), strlen(argv[1]) + 1));
@@ -81,5 +85,5 @@ int main(int argc, char *argv[]) {
     setenv("B2IFACE_NAME", iface_name, 1);
     setenv("B2IFACE_VERBOSE", b2ifverbose, 1);
 
-    return execve(binary_path, &argv[exec_args_offset], environ);
+    return execvpe(binary_path, &argv[exec_args_offset], environ);
 }
