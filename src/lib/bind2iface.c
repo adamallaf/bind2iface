@@ -73,15 +73,18 @@ int socket(int domain, int type, int protocol) {
 }
 
 int connect(int fd, const struct sockaddr *addr, socklen_t len) {
-    const struct sockaddr_in *tmp = (const struct sockaddr_in *)addr;
+    if ( 2 < verbose ) {
+        const struct sockaddr_in *tmp = (const struct sockaddr_in *)addr;
 
-    char *buf = (char *)malloc(32);
+        char *address = (char *)malloc(32);
 
-    inet_ntop(AF_INET, &tmp->sin_addr, buf, 32);
-    if ( 2 < verbose )
-        fprintf(stderr, "connect %d %s:%d\n", fd, buf, ntohs(tmp->sin_port));
+        inet_ntop(AF_INET, &tmp->sin_addr, address, 32);
+        fprintf(
+            stderr, "connect %d %s:%d\n", fd, address, ntohs(tmp->sin_port)
+        );
 
-    free(buf);
+        free(address);
+    }
     return libc_connect(fd, addr, len);
 }
 
