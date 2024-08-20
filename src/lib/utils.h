@@ -1,3 +1,12 @@
+/*
+ * bind2iface utils.h
+ * Copyright (c) 2024 Adam Allaf <adam.allaf@hotmail.com>
+ *
+ * This file is part of bind2iface, licensed under
+ * the GNU General Public License, version 2.
+ * For details, see the LICENSE file in the root of this project.
+ */
+
 #ifndef __BIND2IFACE_UTILS_H__
 #define __BIND2IFACE_UTILS_H__
 

@@ -1,3 +1,14 @@
+# cmake-format: off
+#
+# bind2iface
+# Copyright (c) 2024 Adam Allaf <adam.allaf@hotmail.com>
+#
+# This file is part of bind2iface, licensed under
+# the GNU General Public License, version 2.
+# For details, see the LICENSE file in the root of this project.
+#
+# cmake-format: on
+
 FIND_PACKAGE(Git)
 IF (DEFINED GIT_EXECUTABLE)
   EXECUTE_PROCESS(

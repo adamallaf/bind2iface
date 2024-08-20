@@ -1,3 +1,12 @@
+/*
+ * bind2iface bind2iface.c
+ * Copyright (c) 2024 Adam Allaf
+ *
+ * This file is part of bind2iface, licensed under
+ * the GNU General Public License, version 2.
+ * For details, see the LICENSE file in the root of this project.
+ */
+
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <dlfcn.h>

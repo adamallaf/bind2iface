@@ -1,3 +1,14 @@
+# cmake-format: off
+#
+# bind2iface CMakeLists.txt
+# Copyright (c) 2024 Adam Allaf <adam.allaf@hotmail.com>
+#
+# This file is part of bind2iface, licensed under
+# the GNU General Public License, version 2.
+# For details, see the LICENSE file in the root of this project.
+#
+# cmake-format: on
+
 CMAKE_MINIMUM_REQUIRED(VERSION 3.25.0)
 
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build-version/")
@@ -27,6 +38,11 @@ SET_TARGET_PROPERTIES(
 ADD_EXECUTABLE(${PROJECT_NAME}_exec src/main.c)
 SET_TARGET_PROPERTIES(
   ${PROJECT_NAME}_exec PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
+)
+
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/common/version.h @ONLY
 )
 
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")

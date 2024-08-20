@@ -1,0 +1,15 @@
+/*
+ * bind2iface version.h
+ * Copyright (c) 2024 Adam Allaf
+ *
+ * This file is part of bind2iface, licensed under
+ * the GNU General Public License, version 2.
+ * For details, see the LICENSE file in the root of this project.
+ */
+
+#ifndef __BIND2IFACE_VERSION_H__
+#define __BIND2IFACE_VERSION_H__
+
+static const char VERSION[] = "@BUILD_VERSION@";
+
+#endif
